@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".97" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/capture_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:background="@drawable/toggle_round_button_background"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_line"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/toggle"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginLeft="125dp"
+        android:layout_marginRight="125dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/white_out_line"
+        android:checkedButton="@+id/photoMode"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/capture_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <RadioButton
+            android:id="@+id/photoMode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="PHOTO"
+            android:textColor="@color/yellow"
+            android:textSize="10sp"
+            android:onClick="setMode"/>
+
+        <RadioButton
+            android:id="@+id/videoMode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="VIDEO"
+            android:textColor="@color/yellow"
+            android:textSize="10sp"
+            android:onClick="setMode"/>
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/videoButtonRed"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_record"
+        app:layout_constraintTop_toTopOf="@id/capture_button"
+        app:layout_constraintLeft_toLeftOf="@id/capture_button"
+        app:layout_constraintRight_toRightOf="@id/capture_button"
+        app:layout_constraintBottom_toBottomOf="@id/capture_button"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/photoButtonWhite"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_photo"
+        app:layout_constraintTop_toTopOf="@id/capture_button"
+        app:layout_constraintLeft_toLeftOf="@id/capture_button"
+        app:layout_constraintRight_toRightOf="@id/capture_button"
+        app:layout_constraintBottom_toBottomOf="@id/capture_button"
+        android:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
