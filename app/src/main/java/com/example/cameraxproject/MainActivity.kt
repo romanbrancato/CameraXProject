@@ -1,7 +1,11 @@
-//Referenced from https://developer.android.com/codelabs/camerax-getting-started#0 for basic camera functionality
+//References:
+//https://developer.android.com/codelabs/camerax-getting-started#0 for basic camera functionality
+//https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6 for zoom and tap to focus functionality
+
 package com.example.cameraxproject
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
@@ -10,6 +14,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.RadioButton
 import android.widget.SeekBar
@@ -43,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private var camera: Camera? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -57,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val df = DecimalFormat("#.##")
+        //Zoom using slider
         viewBinding.zoomBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 camera!!.cameraControl.setLinearZoom(progress/100.toFloat())
@@ -70,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        //Flash Toggle Button Listener
         viewBinding.flashButton.setOnCheckedChangeListener { _, isChecked ->
             if (camera!!.cameraInfo.hasFlashUnit()) {
                 if (isChecked) {
@@ -85,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Additional Formatting For Video Timer
         viewBinding.timer.setOnChronometerTickListener { cArg ->
             val elapsedMillis = SystemClock.elapsedRealtime() - cArg.base
             if (elapsedMillis > 3600000L) {
@@ -104,12 +113,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Camera Flip Button Listener
         viewBinding.flipButton.setOnClickListener {
             flipCamera()
         }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
+        // Listen to tap events on the viewfinder and set them as focus regions
+        viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { view: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> return@OnTouchListener true
+                MotionEvent.ACTION_UP -> {
+                    // Get the MeteringPointFactory from PreviewView
+                    val factory = viewBinding.viewFinder.meteringPointFactory
 
+                    // Create a MeteringPoint from the tap coordinates
+                    val point = factory.createPoint(motionEvent.x, motionEvent.y)
+
+                    // Create a MeteringAction from the MeteringPoint, you can configure it to specify the metering mode
+                    val action = FocusMeteringAction.Builder(point).build()
+
+                    // Trigger the focus and metering. The method returns a ListenableFuture since the operation
+                    // is asynchronous. You can use it get notified when the focus is successful or if it fails.
+                    camera!!.cameraControl.startFocusAndMetering(action)
+
+                    return@OnTouchListener true
+                }
+                else -> return@OnTouchListener false
+            }
+        })
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     //Request Permissions If Not Accepted By User Already
@@ -215,6 +248,7 @@ class MainActivity : AppCompatActivity() {
 
         val videoCapture = this.videoCapture ?: return
 
+        viewBinding.timer.base = SystemClock.elapsedRealtime()
         viewBinding.timer.start()
 
         viewBinding.captureButton.isEnabled = false
@@ -297,14 +331,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(lensFacing)
-            .build()
+
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+            val cameraSelector = CameraSelector.Builder()
+                .requireLensFacing(lensFacing)
+                .build()
+
             // Preview
             val preview = Preview.Builder()
                 .build()
