@@ -1,17 +1,23 @@
+//Referenced from https://developer.android.com/codelabs/camerax-getting-started#0 for basic camera functionality
 package com.example.cameraxproject
 
 import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.RadioButton
+import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
+import androidx.camera.core.CameraSelector.DEFAULT_FRONT_CAMERA
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.camera.video.VideoCapture
@@ -27,24 +33,22 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
-
     private var imageCapture: ImageCapture? = null
-
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
-
     private lateinit var cameraExecutor: ExecutorService
-
+    // Select back camera as a default
+    private var cameraSelection = DEFAULT_BACK_CAMERA
     private var mode = "photo"
 
-
+    private lateinit var camera: Camera
+    private lateinit var control: CameraControl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -52,7 +56,38 @@ class MainActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        // Set up the listeners for take photo and video capture buttons
+        viewBinding.zoomBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+              control.setLinearZoom(progress/100.toFloat())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val msg = "Zoom: " + (1 + viewBinding.zoomBar.progress/100.toFloat()).toString()
+                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        viewBinding.flashButton.setOnCheckedChangeListener { _, isChecked ->
+            if (camera.cameraInfo.hasFlashUnit()) {
+                if (isChecked) {
+                    control.enableTorch(true)
+                } else {
+                    control.enableTorch(false)
+                }
+            }
+        }
+
+        viewBinding.timer.setOnChronometerTickListener { cArg ->
+            val elapsedMillis = SystemClock.elapsedRealtime() - cArg.base
+            if (elapsedMillis > 3600000L) {
+                cArg.format = "0%s"
+            } else {
+                cArg.format = "00:%s"
+            }
+        }
+
+        //Capture Button Listener
         viewBinding.captureButton.setOnClickListener {
             if(mode == "photo") {
                 takePhoto()
@@ -62,26 +97,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        viewBinding.flipButton.setOnClickListener {
+            flipCamera()
+        }
+
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
+    //Request Permissions If Not Accepted By User Already
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera()
             } else {
                 Toast.makeText(this,
-                    "Permissions not granted by the user.",
+                    "Permissions Denied",
                     Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
     }
 
-    fun setMode(view: View) {
+    //Switch Between Image and Video Capturing Modes
+    fun changeMode(view: View) {
         if (view is RadioButton) {
             // Is the button now checked?
             val checked = view.isChecked
@@ -91,15 +130,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.photoMode ->
                     if (checked) {
                         mode = "photo"
-                        findViewById<ImageView>(R.id.videoButtonRed).visibility = View.INVISIBLE
-                        findViewById<ImageView>(R.id.photoButtonWhite).visibility = View.VISIBLE
-
+                        viewBinding.videoButtonRed.visibility = View.INVISIBLE
+                        viewBinding.photoButtonWhite.visibility = View.VISIBLE
+                        viewBinding.timer.visibility = View.INVISIBLE
                     }
                 R.id.videoMode ->
                     if (checked) {
                         mode = "video"
-                        findViewById<ImageView>(R.id.videoButtonRed).visibility = View.VISIBLE
-                        findViewById<ImageView>(R.id.photoButtonWhite).visibility = View.INVISIBLE
+                        viewBinding.videoButtonRed.visibility = View.VISIBLE
+                        viewBinding.photoButtonWhite.visibility = View.INVISIBLE
+                        viewBinding.timer.visibility = View.VISIBLE
                     }
             }
         }
@@ -109,6 +149,8 @@ class MainActivity : AppCompatActivity() {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
+        playSound()
+
         // Create time stamped name and MediaStore entry.
         val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis())
@@ -116,7 +158,7 @@ class MainActivity : AppCompatActivity() {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraXProject-Image")
             }
         }
 
@@ -127,28 +169,36 @@ class MainActivity : AppCompatActivity() {
                 contentValues)
             .build()
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
-        imageCapture.takePicture(
-            outputOptions,
+        // Set up image capture listener, which is triggered after photo has been taken
+        imageCapture.takePicture(outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults){
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
+                override fun onImageSaved(output: ImageCapture.OutputFileResults){
+                    val msg = "Photo capture succeeded"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                 }
             }
         )
     }
+    //Plays Shutter Sound
+    private fun playSound() {
+        var MediaPlayer = MediaPlayer.create(this, R.raw.shutter)
+        MediaPlayer.setOnCompletionListener{ mp ->
+            mp.release()
+        }
+        MediaPlayer.start()
+    }
 
     private fun captureVideo() {
+
         val videoCapture = this.videoCapture ?: return
+
+        viewBinding.timer.start()
 
         viewBinding.captureButton.isEnabled = false
 
@@ -167,7 +217,7 @@ class MainActivity : AppCompatActivity() {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
+                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraXProject-Video")
             }
         }
 
@@ -189,16 +239,17 @@ class MainActivity : AppCompatActivity() {
                 when(recordEvent) {
                     is VideoRecordEvent.Start -> {
                         viewBinding.captureButton.apply {
-                            //findViewById<ImageView>(R.id.videoButtonRed).setImageResource(R.drawable.recording)
                             isEnabled = true
                         }
                     }
                     is VideoRecordEvent.Finalize -> {
+
+                        viewBinding.timer.stop()
+                        viewBinding.timer.base = SystemClock.elapsedRealtime()
+
                         if (!recordEvent.hasError()) {
-                            val msg = "Video capture succeeded: " +
-                                    "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
-                                .show()
+                            val msg = "Video capture succeeded"
+                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                             Log.d(TAG, msg)
                         } else {
                             recording?.close()
@@ -214,42 +265,50 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    //Flip Between Back and Front Camera
+    private fun flipCamera() {
+        if (cameraSelection == DEFAULT_FRONT_CAMERA) {
+            cameraSelection = DEFAULT_BACK_CAMERA
+        } else if (cameraSelection == DEFAULT_BACK_CAMERA) {
+            cameraSelection = DEFAULT_FRONT_CAMERA
+        }
+        startCamera()
+    }
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
             // Preview
             val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(viewBinding.viewFinder.surfaceProvider)
                 }
+
+            //Image Capture Use Case
+            imageCapture = ImageCapture.Builder()
+                .build()
+
+            //Video Capture Use Case
             val recorder = Recorder.Builder()
                 .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
-            imageCapture = ImageCapture.Builder().build()
-
-
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture, videoCapture)
-
+                camera = cameraProvider.bindToLifecycle(this, cameraSelection, preview, imageCapture, videoCapture)
+                control = camera.cameraControl
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
-
         }, ContextCompat.getMainExecutor(this))
     }
 
@@ -257,7 +316,6 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(
             baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
-
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()

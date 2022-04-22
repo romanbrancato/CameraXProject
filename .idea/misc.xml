@@ -4,13 +4,18 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2975" />
+        <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/flash_background.xml" value="0.319" />
+        <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/flip.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/ic_photo.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/ic_record.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/recording.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/round_button.xml" value="0.294" />
+        <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/seekbar_thumb.xml" value="0.2975" />
+        <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/timer_background.xml" value="0.319" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/toggle_round_button_background.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/toggle_widget_background.xml" value="0.2975" />
+        <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/track.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/drawable/white_out_line.xml" value="0.2975" />
         <entry key="..\:/Users/roman/AndroidStudioProjects/CameraXProject/app/src/main/res/layout/activity_main.xml" value="0.33" />
       </map>

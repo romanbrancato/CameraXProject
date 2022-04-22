@@ -1,0 +1,22 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+            <item android:bottom="10dp" android:drawable="@drawable/ic_cflip" android:left="10dp" android:right="10dp" android:top="10dp" />
+        </layer-list>
+    </item>
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/gray" />
+                </shape>
+            </item>
+            <item android:bottom="10dp" android:drawable="@drawable/ic_cflip" android:left="10dp" android:right="10dp" android:top="10dp" />
+        </layer-list>
+    </item>
+</selector>
