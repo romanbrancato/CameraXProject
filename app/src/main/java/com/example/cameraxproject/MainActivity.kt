@@ -66,13 +66,14 @@ class MainActivity : AppCompatActivity() {
         //Zoom using slider
         viewBinding.zoomBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                camera!!.cameraControl.setLinearZoom(progress/100.toFloat())
+                camera!!.cameraControl.setLinearZoom(progress / 100.toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                val msg = df.format(camera!!.cameraInfo.zoomState.value!!.zoomRatio).toString() + "x"
+                val msg =
+                    df.format(camera!!.cameraInfo.zoomState.value!!.zoomRatio).toString() + "x"
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             }
         })
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Listen to tap events on the viewfinder and set them as focus regions
-        viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { view: View, motionEvent: MotionEvent ->
+        viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { _: View, motionEvent: MotionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> return@OnTouchListener true
                 MotionEvent.ACTION_UP -> {
@@ -132,8 +133,8 @@ class MainActivity : AppCompatActivity() {
                     // Create a MeteringAction from the MeteringPoint, you can configure it to specify the metering mode
                     val action = FocusMeteringAction.Builder(point).build()
 
-                    // Trigger the focus and metering. The method returns a ListenableFuture since the operation
-                    // is asynchronous. You can use it get notified when the focus is successful or if it fails.
+                    // Trigger the focus and metering
+                    camera!!.cameraControl.cancelFocusAndMetering()
                     camera!!.cameraControl.startFocusAndMetering(action)
 
                     return@OnTouchListener true
@@ -192,6 +193,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Photo Capture
     private fun takePhoto() {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
@@ -244,6 +246,7 @@ class MainActivity : AppCompatActivity() {
         MediaPlayer.start()
     }
 
+    //Video Capture
     private fun captureVideo() {
 
         val videoCapture = this.videoCapture ?: return
