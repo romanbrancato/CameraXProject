@@ -4,8 +4,8 @@
 ### Initial Setup
 
 1. Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21)
-2. In the newly created build.gradle file for the Module add the following inside of dependencies{} block:
-  ```markdown
+2. In the newly created build.gradle file for the Module add the following inside of dependencies{} block
+```markdown
   def camerax_version = "1.1.0-beta01"
   implementation "androidx.camera:camera-core:${camerax_version}"
   implementation "androidx.camera:camera-camera2:${camerax_version}"
