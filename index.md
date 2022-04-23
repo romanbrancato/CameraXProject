@@ -4,7 +4,7 @@
 ### Initial Setup
 
 1. Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21)
-2. In the newly created build.gradle file for the Module add the following inside of dependencies{}
+2. In the newly created build.gradle file for the Module add the following inside of dependencies{}<b>
 ```markdown
   def camerax_version = "1.1.0-beta01"
   implementation "androidx.camera:camera-core:${camerax_version}"
@@ -61,7 +61,7 @@ Note that androidx.camera.view.PreviewView is the view to which the camera previ
      //It is suggested to additionally add a seekBar for future zooming purposes, a button to toggle flash, and another for toggling cameras.
 </androidx.constraintlayout.widget.ConstraintLayout>
  ```
- 2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
+ 2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block<b>
 ```markdown
 package com.android.example.PROJECTNAMEGOESHERE
 
