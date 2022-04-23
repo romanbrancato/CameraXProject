@@ -23,7 +23,7 @@ buildFeatures {
    viewBinding true
 }
   ```
-  also in settings.gradle make the following are inside both repositories{} block:
+  also in settings.gradle ensure the following are inside both repositories{} block:
 ```
    google()
    mavenCentral()
@@ -43,6 +43,7 @@ If you want to have the same layout, I recommend that you download [my res folde
 Otherwise, the following will need to be added to your activity_main.xml in addition to adding listeners for any of the buttons:
 
 * Note that androidx.camera.view.PreviewView is the view to which the camera preview will be streamed to
+
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -63,7 +64,7 @@ Otherwise, the following will need to be added to your activity_main.xml in addi
      //It is suggested to additionally add a seekBar for future zooming purposes, a button to toggle flash, and another for toggling cameras.
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> 
+In order to set up MainActivity.kt, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> 
 * This will serve as the foundation for the most basic of camera functionalities. 
 
 Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
@@ -195,11 +196,16 @@ The following code contains the implementation of the Preview, ImageCapture, and
 The Preview class allows you to see what you will capture, imagine when you first open the default android or ios camera
 
 All use cases are built then binded to the lifecycle of the cameras
+* Any additional use cases are to be added here but be aware that some use cases cannot be added simultaneously or depend on device specifications. Some relevant examples are:
+  * Preview + VideoCapture + ImageCapture: LIMITED device and above.
+  * Preview + VideoCapture + ImageAnalysis: LEVEL_3 (the highest) device added to Android 7(N).
+  * Preview + VideoCapture + ImageAnalysis + ImageCapture: not supported.
 
 * Its important to note that this is where the camera object is intialized. The camera object is how you will be able to control the current camera
 
-The following code must be inserted inside the startCamera(){} block
- ```
+The following code must be inserted inside the startCamera(){} block:
+
+```
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
@@ -245,7 +251,7 @@ The following code must be inserted inside the startCamera(){} block
                 Log.e(TAG, "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
- ```
+```
  *Next Code blocks are referenced from the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0)*
  
  Functionality for ImageCapture and VideoCapture must still be implemented by doing the following
