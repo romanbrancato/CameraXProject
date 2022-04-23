@@ -443,7 +443,7 @@ As of now, you should have an app that can only take photos and videos and saves
   ``` 
  
  **Implementing Tap to Focus** <br>
- *Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)*
+ *Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)* <br>
  This implementation uses the MeteringPointFactory to apply focusing to specific coordinates on the Preview View: 
  ```
   viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { _: View, motionEvent: MotionEvent ->
