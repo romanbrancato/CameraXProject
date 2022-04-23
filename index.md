@@ -3,9 +3,9 @@
 *Additionally all imports that were used in my project are included in the code blocks, you may end up not needing as many*
 ### Initial Setup
 
-1. Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21)
-2. In the newly created build.gradle file for the Module add the following inside of dependencies{} block
-```markdown
+Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21) <br>
+In the newly created build.gradle file for the Module add the following inside of dependencies{} block<br>
+```
   def camerax_version = "1.1.0-beta01"
   implementation "androidx.camera:camera-core:${camerax_version}"
   implementation "androidx.camera:camera-camera2:${camerax_version}"
@@ -16,18 +16,18 @@
   implementation "androidx.camera:camera-extensions:${camerax_version}"
   ```
   add the following at end of android{} which essentially allows findByViewId to be replaced with viewbinding
-  ```markdown
+```
 buildFeatures {
    viewBinding true
 }
   ```
   also in settings.gradle make the following are inside both repositories{}
-  ```markdown
+```
    google()
    mavenCentral()
   ```
-  Permissions must also be established and granted in order for the app to access the camera, microphone, and ability to save to gallery. Therefore the following lines are added to AndroidManifest.xml before <Application
-  ```markdown
+  Permissions must also be established and granted in order for the app to access the camera, microphone, and ability to save to gallery. Therefore the following lines are added to AndroidManifest.xml before Application tag
+  ```
  <uses-feature android:name="android.hardware.camera.any" />
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -41,7 +41,7 @@ buildFeatures {
 Otherwise, the following will need to be added to your activity_main.xml in addition to adding your own buttons.
 
 Note that androidx.camera.view.PreviewView is the view to which the camera preview will be streamed to.
-  ```markdown
+  ```
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -62,7 +62,7 @@ Note that androidx.camera.view.PreviewView is the view to which the camera previ
 </androidx.constraintlayout.widget.ConstraintLayout>
   ```
  2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
-  ```markdown
+  ```
 package com.android.example.PROJECTNAMEGOESHERE
 
 import android.Manifest
@@ -197,7 +197,7 @@ All use cases are built then binded to the lifecycle of the cameras
 Its important to note that this is where the camera object is intialized. The camera object is how you will be able to control the camera.
 
 The following code must be inserted inside the startCamera(){} block
- ```markdown
+ ```
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
@@ -249,7 +249,7 @@ The following code must be inserted inside the startCamera(){} block
  Next Code blocks are referenced from the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0)
  
  This defines what happens when the imageCapture button is pressed. This is to be added into the takePhoto(){} block:
-```markdown
+```
 // Get a stable reference of the modifiable image capture use case
    val imageCapture = imageCapture ?: return
 
@@ -329,7 +329,7 @@ The following code must be inserted inside the startCamera(){} block
         )
  ```
  This defines what happens when the videoCapture button is pressed. This is to be added into the captureVideo(){} block:
- ```markdown
+ ```
         val videoCapture = this.videoCapture ?: return
 
 
@@ -400,18 +400,18 @@ The following code must be inserted inside the startCamera(){} block
   ``` 
   ### Adding Control Over The Camera
   As of now, you should have an app that can only take photos and videos and saves them to the gallery. In order to get features such as zooming, tap to focus, and     flash toggling cameraControl must be obtained from the camera object initialized in startCamera(){} which can be done by:
- ```markdown
+ ```
   camera!!.cameraControl. ...
  ``` 
   Getting various information about the camera can be obtained through:
- ```markdown
+ ```
   camera!!.cameraInfo. ...
  ``` 
   
  Implementing Zoom through seekBar:<br>
  zoomBar is the id of the seekBar used. Displays the zoom factor through a toast
  Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
- ```markdown
+ ```
  val df = DecimalFormat("#.##")
         //Zoom using slider
         viewBinding.zoomBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -431,7 +431,7 @@ The following code must be inserted inside the startCamera(){} block
  
  Implementing Tap to Focus:<br>
  Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
- ```markdown
+ ```
   viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { _: View, motionEvent: MotionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> return@OnTouchListener true
@@ -456,7 +456,7 @@ The following code must be inserted inside the startCamera(){} block
         })
  ``` 
   Toggling Flash:
- ```markdown
+ ```
     //Flash Toggle Button Listener
         viewBinding.flashButton.setOnCheckedChangeListener { _, isChecked ->
             if (camera!!.cameraInfo.hasFlashUnit()) {
@@ -474,7 +474,7 @@ The following code must be inserted inside the startCamera(){} block
         }
  ``` 
    Flipping Between Cameras:
- ```markdown
+ ```
    //Flip Between Back and Front Camera
     private fun flipCamera() {
         if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
