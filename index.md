@@ -1,6 +1,6 @@
 ## CameraX Project Tutorial
-*It should be noted that features not pertaining to the camera will not be covered. This mainly pertains to any xml aspects*
-*Additionally all imports that were used in my project are included in the code blocks, you may end up not needing many*
+*It should be noted that features not pertaining to the camera will not be covered. This mainly pertains to any xml aspects.*
+*Additionally all imports that were used in my project are included in the code blocks, you may end up not needing as many*
 ### Intial Setup
 
 1. Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21)
@@ -61,7 +61,7 @@ Note that androidx.camera.view.PreviewView is the view to which the camera previ
      //It is suggested to additionally add a seekBar for future zooming purposes, a button to toggle flash, and another for toggling cameras.
 </androidx.constraintlayout.widget.ConstraintLayout>
  ```
- 2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0). This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
+ 2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
 ```markdown
 package com.android.example.PROJECTNAMEGOESHERE
 
@@ -89,7 +89,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.LifecycleOwner
-import com.example.cameraxproject.databinding.ActivityMainBinding
+import com.example.PROJECTNAMEGOESHERE.databinding.ActivityMainBinding
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -98,8 +98,6 @@ import java.util.concurrent.Executors
 
 import android.content.ContentValues
 import android.os.Build
-
-typealias LumaListener = (luma: Double) -> Unit
 
 
 class MainActivity : AppCompatActivity() {
@@ -411,8 +409,8 @@ The following code must be inserted inside the startCamera(){} block
   camera!!.cameraInfo. ...
   ``` 
   
- Implementing Zoom through seekBar:
- zoomBar is the id of the seekBar used. Displays the zoom factor through a toast
+ Implementing Zoom through seekBar:<br>
+ zoomBar is the id of the seekBar used. Displays the zoom factor through a toast<br>
  Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
  ```markdown
  val df = DecimalFormat("#.##")
@@ -432,7 +430,7 @@ The following code must be inserted inside the startCamera(){} block
         })
  ``` 
  
- Implementing Tap to Focus:
+ Implementing Tap to Focus:<br>
  Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
   ```markdown
   viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { _: View, motionEvent: MotionEvent ->
@@ -477,7 +475,7 @@ The following code must be inserted inside the startCamera(){} block
         }
    ``` 
    Flipping Between Cameras:
-    ```markdown
+   ```markdown
    //Flip Between Back and Front Camera
     private fun flipCamera() {
         if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
@@ -487,4 +485,3 @@ The following code must be inserted inside the startCamera(){} block
         }
         startCamera()
     }
-     ``` 
