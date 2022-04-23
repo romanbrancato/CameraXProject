@@ -1,10 +1,12 @@
 ## CameraX Project Tutorial
-*It should be noted that features not pertaining to the camera will not be covered. This mainly pertains to any xml aspects.*
-*Additionally all imports that were used in my project are included in the code blocks, you may end up not needing as many*
+*It should be noted that features not pertaining to the camera will not be covered. This mainly pertains to any xml elements.* <br>
+*Additionally all imports that were used in my project are included in the code blocks, you may end up not needing some depending on how much is implemented.*
 ### Initial Setup
 
-Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21) <br>
-In the newly created build.gradle file for the Module add the following inside of dependencies{} block<br>
+Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. 
+* CameraX is not supported below API Level 21 <br>
+
+In the newly created build.gradle file for the Module add the following inside of dependencies{} block:
 ```
   def camerax_version = "1.1.0-beta01"
   implementation "androidx.camera:camera-core:${camerax_version}"
@@ -15,18 +17,18 @@ In the newly created build.gradle file for the Module add the following inside o
   implementation "androidx.camera:camera-view:${camerax_version}"
   implementation "androidx.camera:camera-extensions:${camerax_version}"
   ```
-  add the following at end of android{} which essentially allows findByViewId to be replaced with viewbinding
+  then add the following at end of android{} block which essentially allows findByViewId to be replaced with viewbinding:
 ```
 buildFeatures {
    viewBinding true
 }
   ```
-  also in settings.gradle make the following are inside both repositories{}
+  also in settings.gradle make the following are inside both repositories{} block:
 ```
    google()
    mavenCentral()
   ```
-  Permissions must also be established and granted in order for the app to access the camera, microphone, and ability to save to gallery. Therefore the following lines are added to AndroidManifest.xml before Application tag
+Permissions must also be established and granted in order for the app to access the camera, microphone, and ability to save captures to the gallery. Therefore the following lines are added to AndroidManifest.xml before Application tag:
   ```
  <uses-feature android:name="android.hardware.camera.any" />
 
@@ -38,10 +40,10 @@ buildFeatures {
   ```
 ### Establishing the activity_main.xml and MainActivity.kt
 If you want to have the same layout, I recommend that you download [my res folder](https://github.com/romanbrancato/CameraXProject/tree/master/app/src/main/res).
-Otherwise, the following will need to be added to your activity_main.xml in addition to adding your own buttons.
+Otherwise, the following will need to be added to your activity_main.xml in addition to adding listeners for any of the buttons:
 
-Note that androidx.camera.view.PreviewView is the view to which the camera preview will be streamed to.
-  ```
+* Note that androidx.camera.view.PreviewView is the view to which the camera preview will be streamed to
+```
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -60,10 +62,14 @@ Note that androidx.camera.view.PreviewView is the view to which the camera previ
      //Capture and Record Buttons go here. 
      //It is suggested to additionally add a seekBar for future zooming purposes, a button to toggle flash, and another for toggling cameras.
 </androidx.constraintlayout.widget.ConstraintLayout>
-  ```
-In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
+```
+In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> 
+* This will serve as the foundation for the most basic of camera functionalities. 
+
+Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
 ```
 package com.android.example.PROJECTNAMEGOESHERE
+import com.example.PROJECTNAMEGOESHERE.databinding.ActivityMainBinding
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -89,15 +95,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.LifecycleOwner
-import com.example.PROJECTNAMEGOESHERE.databinding.ActivityMainBinding
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
-import android.content.ContentValues
-import android.os.Build
 
 
 class MainActivity : AppCompatActivity() {
@@ -110,9 +112,9 @@ class MainActivity : AppCompatActivity() {
 
    private lateinit var cameraExecutor: ExecutorService
   
-    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+   private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
   
-    private var camera: Camera? = null
+   private var camera: Camera? = null
 
    override fun onCreate(savedInstanceState: Bundle?) {
        super.onCreate(savedInstanceState)
@@ -190,11 +192,11 @@ class MainActivity : AppCompatActivity() {
 ### Implementing the Basic Functionality
 The following code contains the implementation of the Preview, ImageCapture, and VideoCapture use cases.
 
-The Preview class allows you to see what you will capture, imagine when you first open the default android or ios camera. This will be implemented through the viewFinder
+The Preview class allows you to see what you will capture, imagine when you first open the default android or ios camera
 
 All use cases are built then binded to the lifecycle of the cameras
 
-Its important to note that this is where the camera object is intialized. The camera object is how you will be able to control the camera.
+* Its important to note that this is where the camera object is intialized. The camera object is how you will be able to control the current camera
 
 The following code must be inserted inside the startCamera(){} block
  ```
@@ -244,11 +246,13 @@ The following code must be inserted inside the startCamera(){} block
             }
         }, ContextCompat.getMainExecutor(this))
  ```
+ *Next Code blocks are referenced from the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0)*
+ 
  Functionality for ImageCapture and VideoCapture must still be implemented by doing the following
  
- Next Code blocks are referenced from the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0)
+ When the imageCapture button is pressed, an image is saved to the defined location, name, and timestamp in the created MediaStore entry
  
- This defines what happens when the imageCapture button is pressed. This is to be added into the takePhoto(){} block
+ This is to be added into the takePhoto(){} block:
 ```
 // Get a stable reference of the modifiable image capture use case
    val imageCapture = imageCapture ?: return
@@ -328,7 +332,9 @@ The following code must be inserted inside the startCamera(){} block
             }
         )
  ```
- This defines what happens when the videoCapture button is pressed. This is to be added into the captureVideo(){} block
+ This defines what happens when the videoCapture button is pressed.
+ 
+ This is to be added into the captureVideo(){} block:
  ```
         val videoCapture = this.videoCapture ?: return
 
@@ -399,18 +405,18 @@ The following code must be inserted inside the startCamera(){} block
             }
   ``` 
 ### Adding Control Over The Camera
-  As of now, you should have an app that can only take photos and videos and saves them to the gallery. In order to get features such as zooming, tap to focus, and     flash toggling cameraControl must be obtained from the camera object initialized in startCamera(){} which can be done by:
+As of now, you should have an app that can only take photos and videos and saves them to the gallery. In order to get features such as zooming, tap to focus, and     flash toggling cameraControl must be obtained from the camera object initialized in startCamera(){} which can be done by:
  ```
   camera!!.cameraControl. ...
  ``` 
-  Getting various information about the camera can be obtained through:
+ Getting various information about the camera can be obtained through:
  ```
   camera!!.cameraInfo. ...
  ``` 
   
- Implementing Zoom through seekBar:<br>
- zoomBar is the id of the seekBar used. Displays the zoom factor through a toast
- Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
+ **Implementing Zoom through seekBar**<br>
+ * zoomBar is the id of the seekBar used. Displays the zoom factor through a toast
+ Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6):
  ```
  val df = DecimalFormat("#.##")
         //Zoom using slider
@@ -429,8 +435,9 @@ The following code must be inserted inside the startCamera(){} block
         })
   ``` 
  
- Implementing Tap to Focus:<br>
- Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)
+ **Implementing Tap to Focus** <br>
+ *Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6)*
+ This implementation uses the MeteringPointFactory to apply focusing to specific coordinates on the Preview View: 
  ```
   viewBinding.viewFinder.setOnTouchListener(View.OnTouchListener { _: View, motionEvent: MotionEvent ->
             when (motionEvent.action) {
@@ -455,7 +462,8 @@ The following code must be inserted inside the startCamera(){} block
             }
         })
  ``` 
-  Toggling Flash:
+ **Toggling Flash** <br>
+ The flash is enabled and disabled by calling enableTorch(boolean) on the cameraControl instance:
  ```
     //Flash Toggle Button Listener
         viewBinding.flashButton.setOnCheckedChangeListener { _, isChecked ->
@@ -473,7 +481,8 @@ The following code must be inserted inside the startCamera(){} block
             }
         }
  ``` 
-   Flipping Between Cameras:
+ **Flipping Between Cameras** <br>
+ Can simply be done by altering the CameraSelector then calling the startCamera() function again:
  ```
    //Flip Between Back and Front Camera
     private fun flipCamera() {
