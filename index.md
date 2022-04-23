@@ -398,7 +398,7 @@ The following code must be inserted inside the startCamera(){} block
                 }
             }
   ``` 
-  ### Adding Control Over The Camera
+### Adding Control Over The Camera
   As of now, you should have an app that can only take photos and videos and saves them to the gallery. In order to get features such as zooming, tap to focus, and     flash toggling cameraControl must be obtained from the camera object initialized in startCamera(){} which can be done by:
  ```
   camera!!.cameraControl. ...
