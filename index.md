@@ -37,7 +37,7 @@ buildFeatures {
         android:maxSdkVersion="28" />
   ```
 ### Establishing the activity_main.xml and MainActivity.kt
-1. If you want to have the same layout, I recommend that you download [my res folder](https://github.com/romanbrancato/CameraXProject/tree/master/app/src/main/res).
+If you want to have the same layout, I recommend that you download [my res folder](https://github.com/romanbrancato/CameraXProject/tree/master/app/src/main/res).
 Otherwise, the following will need to be added to your activity_main.xml in addition to adding your own buttons.
 
 Note that androidx.camera.view.PreviewView is the view to which the camera preview will be streamed to.
@@ -61,8 +61,8 @@ Note that androidx.camera.view.PreviewView is the view to which the camera previ
      //It is suggested to additionally add a seekBar for future zooming purposes, a button to toggle flash, and another for toggling cameras.
 </androidx.constraintlayout.widget.ConstraintLayout>
   ```
- 2. In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
-  ```
+In order to set up MainAcitivity, the following code has been provided by the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0).<br> This will serve as the foundation for the most basic of camera functionalities. Tweak the package name to fit your project name in addition to the button listeners in the onCreate{} block
+```
 package com.android.example.PROJECTNAMEGOESHERE
 
 import android.Manifest
@@ -244,11 +244,11 @@ The following code must be inserted inside the startCamera(){} block
             }
         }, ContextCompat.getMainExecutor(this))
  ```
- Functionality for ImageCapture and VideoCapture must still be implemented by doing the following:
+ Functionality for ImageCapture and VideoCapture must still be implemented by doing the following
  
  Next Code blocks are referenced from the [Official CameraX CodeLabs](https://developer.android.com/codelabs/camerax-getting-started#0)
  
- This defines what happens when the imageCapture button is pressed. This is to be added into the takePhoto(){} block:
+ This defines what happens when the imageCapture button is pressed. This is to be added into the takePhoto(){} block
 ```
 // Get a stable reference of the modifiable image capture use case
    val imageCapture = imageCapture ?: return
@@ -328,7 +328,7 @@ The following code must be inserted inside the startCamera(){} block
             }
         )
  ```
- This defines what happens when the videoCapture button is pressed. This is to be added into the captureVideo(){} block:
+ This defines what happens when the videoCapture button is pressed. This is to be added into the captureVideo(){} block
  ```
         val videoCapture = this.videoCapture ?: return
 
