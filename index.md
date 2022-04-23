@@ -1,7 +1,7 @@
 ## CameraX Project Tutorial
 *It should be noted that features not pertaining to the camera will not be covered. This mainly pertains to any xml aspects.*
 *Additionally all imports that were used in my project are included in the code blocks, you may end up not needing as many*
-### Intial Setup
+### Initial Setup
 
 1. Create a new android project using an empty activity. Make sure "Minimum SDK" is set to 21 or higher. (CameraX is not supported below API Level 21)
 2. In the newly created build.gradle file for the Module add the following inside of dependencies{}
