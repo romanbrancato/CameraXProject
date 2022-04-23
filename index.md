@@ -421,7 +421,8 @@ As of now, you should have an app that can only take photos and videos and saves
  ``` 
   
  **Implementing Zoom through seekBar**<br>
- * zoomBar is the id of the seekBar used. Displays the zoom factor through a toast
+ * zoomBar is the id of the seekBar used. Displays the zoom factor through a toast <br>
+ 
  Intially Referenced from [this article](https://proandroiddev.com/android-camerax-tap-to-focus-pinch-to-zoom-zoom-slider-eb88f3aa6fc6):
  ```
  val df = DecimalFormat("#.##")
